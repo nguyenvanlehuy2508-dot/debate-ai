@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     if (delay > 0) await sleep(delay);
     try {
       geminiStream = await ai.models.generateContentStream({
-        model: "gemini-2.5-flash",
+        model: "gemini-2.5-flash-lite",
         contents: `Please adjudicate the following British Parliamentary debate transcript. Respond ONLY with valid JSON matching the schema in your instructions — no markdown fences, no commentary.\n\nTRANSCRIPT:\n${transcript}`,
         config: {
           systemInstruction: systemPrompt,
