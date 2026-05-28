@@ -15,70 +15,76 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { JudgeResult } from "@/types/debate";
 
-const SAMPLE_TRANSCRIPT = `Motion: This House Would Ban Social Media for Children Under 16
+const SAMPLE_TRANSCRIPT = `Motion: This House Would Implement a Universal Basic Income, Set at the Poverty Line, in All Developed Economies
 
---- Opening Government (OG): Oxford A ---
+--- Opening Government (OG): LSE A ---
 
-PM (Alice Chen):
-Thank you, Chair. The motion before us today is clear: This House Would Ban Social Media for Children Under 16. We define "ban" as making it illegal for social media platforms to create accounts for anyone under 16, enforced through age verification.
+PM (Amara Okonkwo):
+Thank you, Chair. We propose that all developed economies introduce a Universal Basic Income — a regular, unconditional cash payment to every adult citizen, set at the official poverty line of each jurisdiction, replacing the most paternalistic and conditional elements of existing welfare while leaving in place programmes that address specific needs like disability support.
 
-Our case rests on two pillars. First, the mental health crisis. Study after study shows that social media use correlates with increased rates of depression, anxiety, and self-harm among young people. The US Surgeon General has called it a public health emergency. Children's brains are still developing — they lack the prefrontal cortex maturity to handle the addictive design of these platforms.
+Our case rests on two principal arguments. First, structural change in labour markets. Automation, precarious gig work, and the decline of stable full-time employment have eroded the post-war assumption that everyone can earn enough to survive through wages alone. UBI rebuilds the floor that wages once provided. It frees workers to refuse exploitative jobs, to retrain, to care for children or elderly parents, to start businesses — the things our current system implicitly punishes by tethering survival to whatever job you can grab.
 
-Second, the predation argument. Social media is the primary vector for child exploitation, cyberbullying, and exposure to harmful content. We have a duty of care to protect children who cannot fully protect themselves.
+Second, the dignity argument. The existing welfare system is built on suspicion. To get help, you must prove your poverty, accept surveillance, attend assessments, perform deservingness. This produces an enormous bureaucracy that exists not to help people but to police them — and it leaves the working poor with nothing because they earn just above the means-tested cut-off. UBI replaces a system that humiliates with one that trusts. Every adult gets the same payment, no questions asked. That changes the relationship between citizens and the state from suspicion to solidarity.
 
-The opposition will say education is enough. But we don't let children drink alcohol and just "educate" them about it — we set age limits because some risks are too great to leave to individual judgment.
+The opposition will say this is unaffordable, or that it kills work incentives. I will preempt: the cost is recoverable from existing welfare bureaucracy, from progressive taxation, and from the gains of liberating people to do more productive work. And the evidence from pilots — Finland, Kenya, Stockton California — shows that recipients do not stop working. They make better choices about work.
 
---- Opening Opposition (OO): Cambridge A ---
+--- Opening Opposition (OO): Oxford A ---
 
-LO (James Wright):
-Thank you. The government's case sounds compelling until you examine it closely.
+LO (Daniel Foster):
+Thank you. The PM has painted UBI as compassionate trust. We will show it is a regressive failure that does less for the poor than the system it replaces, while quietly subsidising the comfortable.
 
-First, correlation is not causation. The studies the PM cites show correlation between social media use and mental health issues, but they don't prove social media causes these problems. The increase in mental health issues among teens predates social media and has complex causes including academic pressure, economic anxiety, and reduced community ties.
+First, the targeting problem. The PM admitted UBI replaces "the most paternalistic" parts of welfare. But the paternalism is not the bug — it is the feature. Means-testing exists because resources are finite, and we want more help going to those who need it most. A flat payment at the poverty line gives the same cash to a billionaire's adult son as to a single mother. To fund that giveaway, you must either raise taxes massively or — far more likely in practice — cut the targeted programmes that actually move people out of poverty: housing benefits, childcare subsidies, healthcare for chronic conditions. The PM's "UBI plus targeted programmes" is fantasy maths. In any real fiscal scenario, UBI cannibalises the programmes that were doing the heavy lifting.
 
-Second, a ban is practically unenforceable. Children will use VPNs, fake IDs, or their parents' accounts. You'll push them to less regulated platforms where they're actually less safe. Prohibition has never worked — not with alcohol, not with drugs, and it won't work here.
+Second, the work disincentive matters more than the PM admits. The pilots she cites were small, time-limited, and crucially funded externally — participants knew the money would stop. A permanent universal payment changes incentives at the margin. We are not saying everyone quits work. We are saying *some* people, in *some* jobs, at *some* margins, reduce hours or exit. Care work, low-wage essential work — these are the jobs most likely to lose workers. That is not liberation; that is a wage subsidy to the employers who get to keep paying badly while the state covers the gap.
 
-Our counter-case: what we need is digital literacy education and platform regulation. Require platforms to disable addictive features for young users, mandate parental controls, and teach children to navigate the digital world safely. This addresses the harms without the massive costs of a ban.
+DLO (Priya Sharma):
+Daniel has shown UBI is regressive and weakens labour markets. I want to address the dignity argument directly, because it is the government's emotional centrepiece.
 
-DLO (Sarah Park):
-Building on James's points, let me address the predation argument directly. Predators existed before social media and will exist after any ban. The solution is better platform moderation and law enforcement, not pushing children off platforms where at least their activity can be monitored. A banned child using a secret account is far more vulnerable than one using a regulated, monitored platform.
+The dignity argument inverts the actual mechanism of dignity. Dignity for the working poor does not come from a state cheque arriving each month — it comes from a job that pays enough, a union that protects you, a society that values your work. UBI is a *concession* to the failure of those institutions. It says: we have given up on making work pay, we have given up on collective bargaining, so here is a cheque to make the disappointment bearable. That is not dignity. That is managed decline.
 
-Furthermore, social media provides genuine benefits for children — connection with peers, access to educational content, creative expression, and community for marginalized youth who may not find acceptance in their physical communities. The government's case completely ignores these benefits.
+Worse: UBI gives the political right exactly what they have wanted for decades — a single, simple, easily-cut welfare system. Once you have replaced housing benefit, jobseeker's allowance, child tax credit, and a dozen other targeted programmes with one number, every future government can adjust that number downward without anyone noticing which group is being hurt. The current messy welfare state is harder to dismantle precisely because each programme has a constituency. UBI hands the dismantlers a single dial.
 
---- Closing Government (CG): Oxford B ---
+--- Closing Government (CG): SOAS A ---
 
-MG (David Liu):
-The opening teams have debated enforcement and correlation. Let me bring a new dimension: the consent argument.
+MG (Kwame Mensah):
+The opening half has debated targeting versus universality, and incentives. We extend on terrain neither team has touched: the *power* argument.
 
-Children cannot meaningfully consent to having their data harvested, their attention manipulated, and their psychological profiles built by trillion-dollar corporations. We don't allow children to sign contracts because we recognize they can't fully understand the consequences. Social media terms of service are essentially contracts that trade personal data for access — contracts no child can meaningfully evaluate.
+The single greatest determinant of bad work — long hours, unsafe conditions, sexual harassment, wage theft — is the inability of the worker to walk away. If you cannot afford to lose this job for two months, you cannot say no to anything. UBI changes that. It is not primarily a poverty reduction tool. It is a *bargaining power* tool. With a basic income guaranteed, workers can refuse the shift, file the complaint, leave the abusive employer, hold out for a union contract. That is the fundamental shift the opening teams missed.
 
-This isn't about whether social media has some benefits. Libraries have benefits too, but we don't let children wander into any section unsupervised. The question is whether the current unrestricted access model is appropriate given children's developmental stage.
+This rebuilds Daniel's argument against him. He says UBI is a subsidy to bad employers. The opposite is true: bad employers exist because their workers cannot leave. Give workers exit, and bad employers either improve or die. UBI is the most effective pro-labour intervention available in a deregulated economy precisely because it works through the labour market rather than against it.
 
-GW (Emma Torres):
-Let me crystallize why the government wins this debate. The opposition offers regulation as an alternative, but we've had years of self-regulation and voluntary measures from platforms — they've consistently failed. COPPA in the US has been toothless. The opposition's "regulate better" is aspirational, not practical.
+And to Priya: yes, UBI is simple. That is why it cannot be cut quietly. Cutting "housing benefit" affects a constituency most voters don't think they belong to. Cutting "the basic income everyone gets" is electoral suicide. Universality is the *protection*, not the vulnerability.
 
-The core clash is simple: the government says some risks are too significant to manage through education alone, so we set age limits — just as we do for driving, voting, drinking, and military service. The opposition says education and regulation are enough, but they cannot show us a single example where this approach has actually worked to protect children online.
+GW (Lucia Romano):
+Let me crystallise. There are three live clashes after eight minutes of debate.
 
---- Closing Opposition (CO): Cambridge B ---
+On targeting: the opening opposition said UBI is regressive because billionaires get it. But — and they did not engage with this — the *funding* side does the targeting. A UBI paid to everyone but funded through progressive taxation is net-redistributive. The Oxford team treated the payment in isolation and ignored the tax structure. That is not analysis; that is half a calculator.
 
-MO (Raj Patel):
-Thank you. Let me offer the extension the opposition needs: the rights-based argument.
+On incentives: the opposition wants you to believe small pilots tell us nothing. But every long-running comparable transfer — the Alaska Permanent Fund, the US Earned Income Tax Credit, Brazil's Bolsa Familia — shows the same pattern: people do not stop working, they make better work choices. The opposition needs a positive theory of why this specific intervention would be different. They have not provided one.
 
-Children have rights too — including the right to information, expression, and association, recognized in the UN Convention on the Rights of the Child. A blanket ban violates these rights disproportionately. The government treats children as objects to be protected rather than developing agents with their own autonomy.
+On power — our extension — neither opposition team has rebutted it. They cannot, because it is true. The single most pro-worker thing you can do in a deregulated economy is guarantee that workers can walk away. UBI does that. We win first because we have the strongest argument on the most important currency in the debate, which is what actually happens to the worst-off when this policy passes.
 
-Moreover, this ban would deepen the digital divide. Wealthy families will find workarounds; disadvantaged children will simply be cut off from an increasingly digital civic space. By 16, they'll enter the digital world with zero experience and zero resilience — they'll be more vulnerable, not less.
+--- Closing Opposition (CO): Cambridge A ---
 
-OW (Lisa Nakamura):
-Let me bring this debate home. We've heard four key clashes today.
+MO (Yusuf Ahmed):
+Lucia frames the round as "the worst-off." Good — we accept that framing. The extension we bring is about *what the worst-off actually need*, and why UBI gives them something different and worse.
 
-First, on harms: both sides agree social media poses risks. The question is proportionality. A ban is a sledgehammer where a scalpel is needed.
+The worst-off in our societies are not the marginally employed who need bargaining power. They are people with chronic illness, disabilities that prevent steady work, fleeing domestic violence, in housing crises, caring full-time for severely disabled relatives. For these people, the poverty-line UBI is *catastrophically* insufficient. Their needs — medical, housing, support workers — vastly exceed the poverty line. Under current systems, targeted programmes acknowledge that and provide more. Under UBI, the government tells them: here is the same flat sum we give everyone, your needs are no longer the state's concern.
 
-Second, on enforcement: the government never adequately addressed how this ban would work in practice. Unenforceable laws breed contempt for the rule of law.
+This is the cruelty hidden in universality. To treat everyone the same is, when needs differ, to treat the most vulnerable worst. The opening government promised UBI "plus" targeted programmes. The closing government has not defended that "plus" — and Kwame's power argument is silent on the people whose problem is not bargaining power because they cannot work in the first place. The bench has split, and both halves abandon the most vulnerable.
 
-Third, on alternatives: the government dismissed regulation, but their own case relies on government action — they just chose the most extreme form. Graduated, targeted regulation is more proportionate and more likely to actually protect children.
+OW (Eleanor Whitfield):
+Let me bring this round home. Four clashes have run.
 
-Fourth, on rights and equity: the government's framing erases children's agency and ignores distributional effects. The opposition offers a framework that respects children's developing autonomy while still protecting them from genuine harms.
+On *targeting versus universality*: the government bench eventually argued that progressive taxation does the targeting. But this concedes our point. If you must rebuild the means-testing machinery through the tax code to make UBI net-redistributive, you have not eliminated bureaucracy — you have moved it. And you have introduced a new failure mode: every adjustment to the tax-and-UBI system now has to win two political battles instead of one. Our framing of targeted welfare is more honest, more administratively efficient, and more responsive to varied need.
 
-The opposition wins because we offer a proportionate, practical, rights-respecting approach to a real problem, rather than the government's well-intentioned but ultimately counterproductive prohibition.`;
+On *incentives*: the government's evidence base remains pilot studies under conditions that do not match permanent universal implementation. We do not need to prove disaster — we need only show real risk in a transition costing trillions. That risk is enough to favour the proven, incremental alternative.
+
+On *power*: the closing government's extension is intellectually serious, and we credit them for raising it. But it solves the problem of one specific group — the marginally-employed worker in unsafe conditions — by impoverishing the support systems for everyone else. A bargaining-power floor for some, paid for by gutting the targeted help that keeps disabled, sick, and caring people afloat, is not progress. It is reallocation from the most vulnerable to the slightly-less vulnerable.
+
+On *political durability*: SOAS argued universality is the protection. We argued it is the vulnerability. The truth depends on whether the right or left controls the future. Stake your most vulnerable citizens on that bet at your peril.
+
+The opposition wins because we have shown UBI's appeal — simplicity, universality, dignity — is the same thing as its danger. We have offered the better account of targeted welfare, of work, and most importantly, of who actually loses when this policy passes.`;
 
 function getRankBadgeColor(rank: number) {
   switch (rank) {
