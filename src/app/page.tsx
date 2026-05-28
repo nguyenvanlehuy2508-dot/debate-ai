@@ -167,7 +167,7 @@ export default function Home() {
         setStreamProgress(fullText.length);
       }
 
-      const errMatch = fullText.match(/\n\n__STREAM_ERROR__:(.+)$/s);
+      const errMatch = fullText.match(/\n\n__STREAM_ERROR__:([\s\S]+)$/);
       if (errMatch) {
         throw new Error(errMatch[1].trim());
       }
