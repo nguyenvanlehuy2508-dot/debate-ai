@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -14,6 +14,44 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { JudgeResult } from "@/types/debate";
+import { JudgeMascot } from "@/components/JudgeMascot";
+
+type MascotState = "idle" | "thinking" | "happy" | "confused";
+
+const PHRASES: Record<MascotState, string[]> = {
+  idle: [
+    "Ready when you are!",
+    "Got a transcript? Let's judge.",
+    "What motion are we tackling today?",
+    "I'm sharp and ready to call this round.",
+    "Show me a good debate!",
+  ],
+  thinking: [
+    "Hmm, let me weigh the clashes...",
+    "Working through the extensions...",
+    "Comparing the opening half to the closing half...",
+    "Mapping the burdens... almost there.",
+    "This is the fun part.",
+  ],
+  happy: [
+    "Good job, all teams! Here's my call.",
+    "Solid round! Let's break it down.",
+    "Great engagement — let me explain my decision.",
+    "Nice debate. Here's how it shook out.",
+    "Done! Tab through the breakdown below.",
+  ],
+  confused: [
+    "Oh no… something went sideways. Don't be sad — try again!",
+    "Unfortunately the AI hit a snag. Refresh and retry?",
+    "Hmm, that didn't work out. Have another go.",
+    "Something tripped me up. One more try?",
+  ],
+};
+
+function pickPhrase(state: MascotState, seed: number): string {
+  const pool = PHRASES[state];
+  return pool[seed % pool.length];
+}
 
 const SAMPLE_TRANSCRIPT = `Motion: This House Would Implement a Universal Basic Income, Set at the Poverty Line, in All Developed Economies
 
@@ -89,23 +127,49 @@ The opposition wins because we have shown UBI's appeal — simplicity, universal
 function getRankBadgeColor(rank: number) {
   switch (rank) {
     case 1:
-      return "bg-yellow-100 text-yellow-800 border-yellow-300";
+      return "bg-gradient-to-br from-yellow-300 to-amber-500 text-white border-amber-600 shadow-md shadow-amber-300/50";
     case 2:
-      return "bg-gray-100 text-gray-700 border-gray-300";
+      return "bg-gradient-to-br from-slate-300 to-slate-500 text-white border-slate-600 shadow-md shadow-slate-300/50";
     case 3:
-      return "bg-orange-100 text-orange-700 border-orange-300";
+      return "bg-gradient-to-br from-orange-400 to-amber-700 text-white border-amber-800 shadow-md shadow-orange-300/50";
     default:
-      return "bg-red-100 text-red-700 border-red-300";
+      return "bg-gradient-to-br from-rose-400 to-rose-600 text-white border-rose-700 shadow-md shadow-rose-300/50";
   }
 }
 
+function getRankCardAccent(rank: number) {
+  switch (rank) {
+    case 1:
+      return "border-l-amber-400 bg-gradient-to-r from-amber-50/60 to-transparent";
+    case 2:
+      return "border-l-slate-400 bg-gradient-to-r from-slate-50/60 to-transparent";
+    case 3:
+      return "border-l-orange-400 bg-gradient-to-r from-orange-50/60 to-transparent";
+    default:
+      return "border-l-rose-400 bg-gradient-to-r from-rose-50/60 to-transparent";
+  }
+}
+
+function getRankLabel(rank: number) {
+  return ["1st", "2nd", "3rd", "4th"][rank - 1] ?? `${rank}th`;
+}
+
 function getScoreColor(score: number) {
-  if (score >= 85) return "text-green-700";
-  if (score >= 80) return "text-blue-700";
-  if (score >= 76) return "text-emerald-700";
-  if (score >= 75) return "text-slate-700";
-  if (score >= 70) return "text-yellow-700";
-  return "text-red-700";
+  if (score >= 85) return "text-emerald-700";
+  if (score >= 80) return "text-indigo-700";
+  if (score >= 76) return "text-violet-700";
+  if (score >= 75) return "text-slate-600";
+  if (score >= 70) return "text-amber-700";
+  return "text-rose-700";
+}
+
+function getScoreBg(score: number) {
+  if (score >= 85) return "bg-emerald-50 border-emerald-200";
+  if (score >= 80) return "bg-indigo-50 border-indigo-200";
+  if (score >= 76) return "bg-violet-50 border-violet-200";
+  if (score >= 75) return "bg-slate-50 border-slate-200";
+  if (score >= 70) return "bg-amber-50 border-amber-200";
+  return "bg-rose-50 border-rose-200";
 }
 
 function extractJson(text: string): string {
@@ -125,6 +189,24 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [streamProgress, setStreamProgress] = useState(0);
+  const [phraseSeed, setPhraseSeed] = useState(0);
+
+  const mascotState: MascotState = loading
+    ? "thinking"
+    : error
+      ? "confused"
+      : result
+        ? "happy"
+        : "idle";
+
+  useEffect(() => {
+    setPhraseSeed((s) => s + 1);
+  }, [mascotState]);
+
+  const currentPhrase = useMemo(
+    () => pickPhrase(mascotState, phraseSeed),
+    [mascotState, phraseSeed],
+  );
 
   async function handleJudge() {
     setLoading(true);
@@ -207,136 +289,211 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
-      <div className="mx-auto max-w-5xl px-4 py-8">
-        <header className="mb-8 text-center">
-          <h1 className="text-4xl font-bold tracking-tight">Debate AI</h1>
-          <p className="mt-2 text-muted-foreground">
-            AI-powered British Parliamentary debate adjudication
-          </p>
+    <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-violet-50 via-amber-50/30 to-white">
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-violet-200/40 blur-3xl" />
+        <div className="absolute top-40 -right-32 h-96 w-96 rounded-full bg-amber-200/40 blur-3xl" />
+      </div>
+
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:py-12">
+        <header className="mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-700 text-xl shadow-lg shadow-violet-300/40">
+              <span className="text-white">⚖️</span>
+            </div>
+            <div>
+              <h1 className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-violet-700 to-indigo-700 bg-clip-text text-transparent">
+                Debate AI
+              </h1>
+              <p className="text-xs text-muted-foreground">
+                WUDC-quality adjudication, instantly
+              </p>
+            </div>
+          </div>
+          <div className="hidden items-center gap-2 sm:flex">
+            <Badge variant="secondary" className="bg-violet-100 text-violet-700 border-violet-200">
+              British Parliamentary
+            </Badge>
+            <Badge variant="secondary" className="bg-amber-100 text-amber-800 border-amber-200">
+              Powered by Gemini
+            </Badge>
+          </div>
         </header>
 
-        <Card className="mb-8">
+        <section className="mb-8 grid items-center gap-6 sm:grid-cols-[auto_1fr] sm:gap-8">
+          <div className="flex justify-center sm:justify-start">
+            <JudgeMascot mood={mascotState} size={170} />
+          </div>
+          <div className="relative">
+            <div className="relative rounded-2xl border-2 border-violet-200 bg-white/90 px-5 py-4 shadow-md backdrop-blur sm:px-6 sm:py-5">
+              <div className="absolute -left-3 top-8 hidden h-5 w-5 rotate-45 border-b-2 border-l-2 border-violet-200 bg-white sm:block" />
+              <p className="text-base font-medium text-slate-800 sm:text-lg">
+                {currentPhrase}
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Paste a BP debate transcript and I'll give you a full <strong>Oral Adjudication</strong> —
+                rankings, comparative justification, individual scores, and feedback with mechanism suggestions.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <Card className="mb-8 border-violet-200/60 bg-white/80 shadow-lg shadow-violet-100/40 backdrop-blur">
           <CardHeader>
-            <CardTitle>Debate Transcript</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-2xl">📝</span> Debate Transcript
+            </CardTitle>
             <CardDescription>
-              Paste a BP debate transcript below. Include speaker names, team
-              positions, and the motion.
+              Include the motion, speaker names, team positions (OG/OO/CG/CO), and the speeches.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Textarea
-              placeholder="Paste your debate transcript here..."
+              placeholder="Motion: This House Would…&#10;&#10;PM (Alice, OG Team A):&#10;Thank you, Chair…"
               value={transcript}
               onChange={(e) => setTranscript(e.target.value)}
               rows={12}
-              className="font-mono text-sm"
+              className="font-mono text-sm border-violet-200 focus-visible:ring-violet-400"
             />
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row">
               <Button
                 onClick={handleJudge}
                 disabled={loading || !transcript.trim()}
-                className="px-8"
+                className="bg-gradient-to-r from-violet-600 to-indigo-700 hover:from-violet-700 hover:to-indigo-800 px-8 shadow-md shadow-violet-300/40"
               >
-                {loading ? "Judging..." : "Judge Debate"}
+                {loading ? "Judging…" : "⚖️  Judge Debate"}
               </Button>
               <Button
                 variant="outline"
                 onClick={() => setTranscript(SAMPLE_TRANSCRIPT)}
                 disabled={loading}
+                className="border-violet-200 text-violet-700 hover:bg-violet-50 hover:text-violet-800"
               >
-                Load Sample Debate
+                📚 Load Sample Debate
               </Button>
+              {transcript && !loading && (
+                <Button
+                  variant="ghost"
+                  onClick={() => { setTranscript(""); setResult(null); setError(null); }}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  Clear
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
 
         {loading && (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-              <p className="text-muted-foreground">
-                {streamProgress === 0
-                  ? "Connecting to the AI..."
-                  : "Streaming adjudication from the AI..."}
-              </p>
-              {streamProgress > 0 && (
-                <p className="mt-2 text-sm tabular-nums text-muted-foreground">
-                  {streamProgress.toLocaleString()} characters received
-                </p>
-              )}
+          <Card className="border-violet-200 bg-gradient-to-br from-violet-50 to-white shadow-md">
+            <CardContent className="py-10 text-center">
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative">
+                  <div className="absolute inset-0 animate-ping rounded-full bg-violet-300/30" />
+                  <div className="relative h-10 w-10 animate-spin rounded-full border-4 border-violet-200 border-t-violet-600" />
+                </div>
+                <div>
+                  <p className="text-lg font-semibold text-violet-900">
+                    {streamProgress === 0
+                      ? "Connecting to the judge…"
+                      : "Streaming the adjudication…"}
+                  </p>
+                  {streamProgress > 0 && (
+                    <p className="mt-1 text-sm tabular-nums text-violet-600">
+                      ✨ {streamProgress.toLocaleString()} characters received
+                    </p>
+                  )}
+                </div>
+              </div>
             </CardContent>
           </Card>
         )}
 
         {error && (
-          <Card className="border-destructive">
+          <Card className="border-rose-200 bg-gradient-to-br from-rose-50 to-white shadow-md">
             <CardContent className="py-6">
-              <p className="text-destructive font-medium">Error: {error}</p>
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">😟</span>
+                <div>
+                  <p className="font-semibold text-rose-900">Unfortunately, something went wrong</p>
+                  <p className="mt-1 text-sm text-rose-800/90">{error}</p>
+                  <p className="mt-2 text-xs text-rose-700/70">Don't be sad — try again. Sometimes the AI just needs a moment.</p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         )}
 
         {result && (
           <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Motion</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-lg font-medium italic">{result.motion}</p>
+            <Card className="overflow-hidden border-violet-200 bg-gradient-to-br from-violet-600 via-indigo-700 to-violet-800 text-white shadow-xl shadow-violet-300/40">
+              <CardContent className="py-6">
+                <div className="text-xs uppercase tracking-wider text-violet-200">Motion</div>
+                <p className="mt-2 text-xl font-bold leading-snug sm:text-2xl">{result.motion}</p>
               </CardContent>
             </Card>
 
             <Tabs defaultValue="oa">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="oa">Oral Adjudication</TabsTrigger>
-                <TabsTrigger value="scores">Scores</TabsTrigger>
-                <TabsTrigger value="clashes">Clashes</TabsTrigger>
-                <TabsTrigger value="feedback">Feedback</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 gap-1 bg-violet-100/50 p-1 sm:grid-cols-4">
+                <TabsTrigger value="oa" className="data-[state=active]:bg-white data-[state=active]:text-violet-900 data-[state=active]:shadow">
+                  📣 OA
+                </TabsTrigger>
+                <TabsTrigger value="scores" className="data-[state=active]:bg-white data-[state=active]:text-violet-900 data-[state=active]:shadow">
+                  📊 Scores
+                </TabsTrigger>
+                <TabsTrigger value="clashes" className="data-[state=active]:bg-white data-[state=active]:text-violet-900 data-[state=active]:shadow">
+                  ⚔️ Clashes
+                </TabsTrigger>
+                <TabsTrigger value="feedback" className="data-[state=active]:bg-white data-[state=active]:text-violet-900 data-[state=active]:shadow">
+                  💬 Feedback
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="oa" className="space-y-4">
-                <Card>
+                <Card className="border-violet-200/60 bg-white/90 shadow-sm">
                   <CardHeader>
-                    <CardTitle>1. General Feedback</CardTitle>
-                    <CardDescription>
-                      Overall framing of the debate
-                    </CardDescription>
+                    <CardTitle className="flex items-center gap-2 text-violet-900">
+                      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-violet-100 text-sm font-bold text-violet-700">1</span>
+                      General Feedback
+                    </CardTitle>
+                    <CardDescription>How the round played out at a glance</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p className="whitespace-pre-line leading-relaxed">
+                    <p className="whitespace-pre-line leading-relaxed text-slate-700">
                       {result.general_feedback}
                     </p>
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="border-violet-200/60 bg-white/90 shadow-sm">
                   <CardHeader>
-                    <CardTitle>2. Ranking</CardTitle>
-                    <CardDescription>
-                      1st through 4th placement
-                    </CardDescription>
+                    <CardTitle className="flex items-center gap-2 text-violet-900">
+                      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-violet-100 text-sm font-bold text-violet-700">2</span>
+                      The Call
+                    </CardTitle>
+                    <CardDescription>1st through 4th</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {result.rankings.map((ranking) => (
                       <div
                         key={ranking.rank}
-                        className="flex items-start gap-4 rounded-lg border p-4"
+                        className={`flex items-start gap-4 rounded-xl border border-l-4 p-4 transition-all hover:shadow-md ${getRankCardAccent(ranking.rank)}`}
                       >
                         <span
-                          className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 text-lg font-bold ${getRankBadgeColor(ranking.rank)}`}
+                          className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border-2 text-base font-extrabold ${getRankBadgeColor(ranking.rank)}`}
                         >
-                          {ranking.rank}
+                          {getRankLabel(ranking.rank)}
                         </span>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold">
+                        <div className="flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-lg font-bold text-slate-900">
                               {ranking.team}
                             </span>
-                            <Badge variant="outline">{ranking.position}</Badge>
+                            <Badge variant="outline" className="border-violet-300 bg-violet-50 text-violet-700">
+                              {ranking.position}
+                            </Badge>
                           </div>
-                          <p className="mt-1 text-sm text-muted-foreground">
+                          <p className="mt-1 text-sm text-slate-600">
                             {ranking.justification}
                           </p>
                         </div>
@@ -345,15 +502,16 @@ export default function Home() {
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="border-violet-200/60 bg-white/90 shadow-sm">
                   <CardHeader>
-                    <CardTitle>3. Justification for the Ranking</CardTitle>
-                    <CardDescription>
-                      Walkthrough of the clashes and comparative weighing
-                    </CardDescription>
+                    <CardTitle className="flex items-center gap-2 text-violet-900">
+                      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-violet-100 text-sm font-bold text-violet-700">3</span>
+                      Justification — Clash by Clash
+                    </CardTitle>
+                    <CardDescription>Comparative walkthrough of how the call was made</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p className="whitespace-pre-line leading-relaxed">
+                    <p className="whitespace-pre-line leading-relaxed text-slate-700">
                       {result.ranking_justification}
                     </p>
                   </CardContent>
@@ -361,103 +519,82 @@ export default function Home() {
               </TabsContent>
 
               <TabsContent value="scores">
-                <Card>
+                <Card className="border-violet-200/60 bg-white/90 shadow-sm">
                   <CardHeader>
-                    <CardTitle>Speaker Scores</CardTitle>
+                    <CardTitle className="text-violet-900">Speaker Scores</CardTitle>
                     <CardDescription>
-                      Content (40%) + Style (30%) + Strategy (30%) = Total · WUDC scale: 75 = average, 80 = excellent
+                      Content (40%) + Style (30%) + Strategy (30%) · WUDC scale: <strong>75 = average</strong>, <strong>80 = excellent</strong>
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b text-left">
-                            <th className="pb-3 font-semibold">Speaker</th>
-                            <th className="pb-3 font-semibold">Role</th>
-                            <th className="pb-3 text-center font-semibold">
-                              Content
-                            </th>
-                            <th className="pb-3 text-center font-semibold">
-                              Style
-                            </th>
-                            <th className="pb-3 text-center font-semibold">
-                              Strategy
-                            </th>
-                            <th className="pb-3 text-center font-semibold">
-                              Total
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {result.scores.map((score) => (
-                            <tr key={score.speaker} className="border-b">
-                              <td className="py-3">
-                                <div className="font-medium">
-                                  {score.speaker}
-                                </div>
-                                <div className="text-xs text-muted-foreground">
-                                  {score.team}
-                                </div>
-                              </td>
-                              <td className="py-3">
-                                <Badge variant="secondary">{score.role}</Badge>
-                              </td>
-                              <td className="py-3 text-center">
-                                {score.content}
-                              </td>
-                              <td className="py-3 text-center">
-                                {score.style}
-                              </td>
-                              <td className="py-3 text-center">
-                                {score.strategy}
-                              </td>
-                              <td
-                                className={`py-3 text-center text-lg font-bold ${getScoreColor(score.total)}`}
-                              >
-                                {score.total}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {result.scores.map((score) => (
+                        <div
+                          key={score.speaker}
+                          className={`rounded-xl border p-4 transition-all hover:shadow ${getScoreBg(score.total)}`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <div className="font-semibold text-slate-900">{score.speaker}</div>
+                              <div className="text-xs text-slate-600">{score.team}</div>
+                              <Badge variant="secondary" className="mt-1 bg-white/70">
+                                {score.role}
+                              </Badge>
+                            </div>
+                            <div className={`text-3xl font-extrabold tabular-nums ${getScoreColor(score.total)}`}>
+                              {score.total}
+                            </div>
+                          </div>
+                          <div className="mt-3 flex gap-3 text-xs">
+                            <div>
+                              <div className="text-slate-500">Content</div>
+                              <div className="font-semibold text-slate-700">{score.content}</div>
+                            </div>
+                            <div>
+                              <div className="text-slate-500">Style</div>
+                              <div className="font-semibold text-slate-700">{score.style}</div>
+                            </div>
+                            <div>
+                              <div className="text-slate-500">Strategy</div>
+                              <div className="font-semibold text-slate-700">{score.strategy}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
               </TabsContent>
 
               <TabsContent value="clashes">
-                <Card>
+                <Card className="border-violet-200/60 bg-white/90 shadow-sm">
                   <CardHeader>
-                    <CardTitle>Main Clashes</CardTitle>
+                    <CardTitle className="text-violet-900">⚔️ Main Clashes</CardTitle>
                     <CardDescription>
-                      Key points of contention in the debate
+                      The contested questions that determined the round
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {result.clashes.map((clash, i) => (
-                      <div key={i}>
+                      <div key={i} className="rounded-xl border border-violet-100 bg-gradient-to-br from-violet-50/40 to-white p-4">
                         <div className="flex items-start gap-3">
-                          <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                          <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-700 text-xs font-bold text-white shadow">
                             {i + 1}
                           </span>
-                          <div>
-                            <h4 className="font-semibold">{clash.title}</h4>
-                            <div className="mt-1 flex gap-1">
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-slate-900">{clash.title}</h4>
+                            <div className="mt-1 flex flex-wrap gap-1">
                               {clash.teams_involved.map((team) => (
-                                <Badge key={team} variant="outline">
+                                <Badge key={team} variant="outline" className="border-violet-300 bg-white text-violet-700">
                                   {team}
                                 </Badge>
                               ))}
                             </div>
-                            <p className="mt-2 text-sm text-muted-foreground">
+                            <p className="mt-2 text-sm leading-relaxed text-slate-700">
                               {clash.description}
                             </p>
                           </div>
                         </div>
-                        {i < result.clashes.length - 1 && (
-                          <Separator className="mt-4" />
-                        )}
                       </div>
                     ))}
                   </CardContent>
@@ -467,48 +604,69 @@ export default function Home() {
               <TabsContent value="feedback">
                 <div className="space-y-4">
                   {result.feedback.map((fb) => (
-                    <Card key={fb.speaker}>
+                    <Card key={fb.speaker} className="border-violet-200/60 bg-white/90 shadow-sm">
                       <CardHeader>
-                        <CardTitle className="text-base">
-                          {fb.speaker}
-                        </CardTitle>
-                        <CardDescription>{fb.team}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <p className="text-sm">{fb.summary}</p>
-                        <Separator />
-                        <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="flex items-start justify-between gap-2">
                           <div>
-                            <h5 className="mb-2 text-sm font-semibold text-green-700">
-                              Strengths
+                            <CardTitle className="text-base text-violet-900">
+                              {fb.speaker}
+                            </CardTitle>
+                            <CardDescription>{fb.team}</CardDescription>
+                          </div>
+                          <span className="text-2xl">🎙️</span>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <p className="rounded-lg bg-violet-50/60 p-3 text-sm italic text-slate-700">
+                          {fb.summary}
+                        </p>
+
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="rounded-lg border border-emerald-200 bg-emerald-50/60 p-3">
+                            <h5 className="mb-2 flex items-center gap-1.5 text-sm font-bold text-emerald-800">
+                              <span>👍</span> Good jobs
                             </h5>
-                            <ul className="space-y-1">
+                            <ul className="space-y-1.5">
                               {fb.strengths.map((s, i) => (
-                                <li
-                                  key={i}
-                                  className="text-sm text-muted-foreground"
-                                >
-                                  + {s}
+                                <li key={i} className="text-sm text-emerald-900/90">
+                                  <span className="mr-1 text-emerald-600">✓</span>
+                                  {s}
                                 </li>
                               ))}
                             </ul>
                           </div>
-                          <div>
-                            <h5 className="mb-2 text-sm font-semibold text-orange-700">
-                              Areas for Improvement
+                          <div className="rounded-lg border border-amber-200 bg-amber-50/60 p-3">
+                            <h5 className="mb-2 flex items-center gap-1.5 text-sm font-bold text-amber-800">
+                              <span>💡</span> Areas to grow
                             </h5>
-                            <ul className="space-y-1">
+                            <ul className="space-y-1.5">
                               {fb.improvements.map((imp, i) => (
-                                <li
-                                  key={i}
-                                  className="text-sm text-muted-foreground"
-                                >
-                                  - {imp}
+                                <li key={i} className="text-sm text-amber-900/90">
+                                  <span className="mr-1 text-amber-600">→</span>
+                                  {imp}
                                 </li>
                               ))}
                             </ul>
                           </div>
                         </div>
+
+                        {fb.suggested_mechanisms && fb.suggested_mechanisms.length > 0 && (
+                          <div className="rounded-lg border-2 border-dashed border-indigo-200 bg-gradient-to-br from-indigo-50/60 to-violet-50/30 p-4">
+                            <h5 className="mb-2 flex items-center gap-1.5 text-sm font-bold text-indigo-900">
+                              <span>🛠️</span> Mechanisms you could have added
+                            </h5>
+                            <ul className="space-y-2">
+                              {fb.suggested_mechanisms.map((m, i) => (
+                                <li
+                                  key={i}
+                                  className="rounded-md border border-indigo-100 bg-white/70 p-2.5 text-sm leading-relaxed text-indigo-950"
+                                >
+                                  {m}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   ))}
@@ -517,6 +675,12 @@ export default function Home() {
             </Tabs>
           </div>
         )}
+
+        <footer className="mt-16 border-t border-violet-200/60 pt-6 text-center text-xs text-muted-foreground">
+          <p>
+            Debate AI — practice tool for British Parliamentary debaters. Adjudication is AI-generated and intended for practice, not official results.
+          </p>
+        </footer>
       </div>
     </main>
   );

@@ -26,6 +26,7 @@ export interface Feedback {
   team: string;
   strengths: string[];
   improvements: string[];
+  suggested_mechanisms?: string[];
   summary: string;
 }
 
